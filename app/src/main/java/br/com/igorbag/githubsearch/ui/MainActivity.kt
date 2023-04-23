@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
     //Metodo responsavel por buscar todos os repositorios do usuario fornecido
     private fun getAllReposByUserName() {
 
-        githubApi.getAllRepositoriesByUser("user").enqueue(object : Callback<List<Repository>> {
+        githubApi.getAllRepositoriesByUser(nomeUsuario.text.toString()).enqueue(object : Callback<List<Repository>> {
             override fun onResponse(
                 call: Call<List<Repository>>,
                 response: Response<List<Repository>>
@@ -135,14 +135,14 @@ class MainActivity : AppCompatActivity() {
          */
         val adapterRepository = RepositoryAdapter(list)
         adapterRepository.cardItemLister = { repository -> openBrowser(repository.htmlUrl) }
+        adapterRepository.btnShareLister = {repository -> shareRepositoryLink(repository.htmlUrl) }
         listaRepositories.adapter = adapterRepository
 
 
     }
 
     // Metodo responsavel por compartilhar o link do repositorio selecionado
-    // @Todo 11 - Colocar esse metodo no click do share item do adapter
-    fun shareRepositoryLink(urlRepository: String) {
+       fun shareRepositoryLink(urlRepository: String) {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, urlRepository)
