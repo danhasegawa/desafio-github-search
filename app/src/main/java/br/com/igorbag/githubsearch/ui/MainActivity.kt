@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import br.com.igorbag.githubsearch.R
 import br.com.igorbag.githubsearch.data.GitHubService
@@ -99,33 +98,34 @@ class MainActivity : AppCompatActivity() {
     //Metodo responsavel por buscar todos os repositorios do usuario fornecido
     private fun getAllReposByUserName() {
 
-        githubApi.getAllRepositoriesByUser(nomeUsuario.text.toString()).enqueue(object : Callback<List<Repository>> {
-            override fun onResponse(
-                call: Call<List<Repository>>,
-                response: Response<List<Repository>>
-            ) {
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        setupAdapter(it)
+        githubApi.getAllRepositoriesByUser(nomeUsuario.text.toString())
+            .enqueue(object : Callback<List<Repository>> {
+                override fun onResponse(
+                    call: Call<List<Repository>>,
+                    response: Response<List<Repository>>
+                ) {
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            setupAdapter(it)
+                        }
+                    } else {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Algo deu errado, tente mais tarde",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                } else {
+                }
+
+                override fun onFailure(call: Call<List<Repository>>, t: Throwable) {
                     Toast.makeText(
                         this@MainActivity,
                         "Algo deu errado, tente mais tarde",
                         Toast.LENGTH_SHORT
                     ).show()
+
                 }
-            }
-
-            override fun onFailure(call: Call<List<Repository>>, t: Throwable) {
-                Toast.makeText(
-                    this@MainActivity,
-                    "Algo deu errado, tente mais tarde",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-            }
-        })
+            })
     }
 
     // Metodo responsavel por realizar a configuracao do adapter
@@ -135,14 +135,14 @@ class MainActivity : AppCompatActivity() {
          */
         val adapterRepository = RepositoryAdapter(list)
         adapterRepository.cardItemLister = { repository -> openBrowser(repository.htmlUrl) }
-        adapterRepository.btnShareLister = {repository -> shareRepositoryLink(repository.htmlUrl) }
+        adapterRepository.btnShareLister = { repository -> shareRepositoryLink(repository.htmlUrl) }
         listaRepositories.adapter = adapterRepository
 
 
     }
 
     // Metodo responsavel por compartilhar o link do repositorio selecionado
-       fun shareRepositoryLink(urlRepository: String) {
+    private fun shareRepositoryLink(urlRepository: String) {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, urlRepository)

@@ -3,6 +3,7 @@ package br.com.igorbag.githubsearch.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.igorbag.githubsearch.R
@@ -23,15 +24,18 @@ class RepositoryAdapter(private val repositories: List<Repository>) :
 
     // Pega o conteudo da view e troca pela informacao de item de uma lista
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        // Exemplo de click no btn Share
-        //holder.favorito.setOnClickListener {
-        //    btnShareLister(repositores[position])
-        //}
-        holder.atributo.text = repositories[position].name
+
+        val repositoryItem = repositories[position]
+
+        holder.favorito.setOnClickListener {
+            btnShareLister(repositoryItem)
+        }
 
         holder.itemView.setOnClickListener {
-            cardItemLister(repositories[position])
+            cardItemLister(repositoryItem)
         }
+        holder.atributo.text = repositories[position].name
+
 
     }
 
@@ -42,10 +46,12 @@ class RepositoryAdapter(private val repositories: List<Repository>) :
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val atributo: TextView
+        val favorito: ImageView
 
         init {
             view.apply {
                 atributo = findViewById(R.id.tv_repositoryName)
+                favorito = findViewById(R.id.iv_share)
             }
         }
 
